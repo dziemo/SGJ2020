@@ -85,7 +85,7 @@ public class PathDrawer : MonoBehaviour
                 {
                     for (int i = 0; i < lr.colorGradient.alphaKeys.Length; i++)
                     {
-                        var alpha = Mathf.Lerp(0.2f, 0f, (maxDist - currDist)/maxDist * 2);
+                        var alpha = Mathf.Lerp(0.2f, 0f, (maxDist - currDist)/maxDist * 1.2f);
 
                         lr.endColor = new Color(1, 1, 1, alpha);
                         lr.startColor = new Color(1, 1, 1, alpha);

@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour
 
     Camera cam;
 
-    int[] pointsLimits = new int[] { 250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500 };
+    int[] pointsLimits = new int[] { 250, 500, 750, 1000, 1500, 1750, 2000, 2500, 3000, 4000 };
 
     int maxPoints = 100;
 
@@ -67,7 +67,7 @@ public class GameController : MonoBehaviour
         pointsLimit = pointsLimits[round];
         round++;
         pointsText.text = points.ToString();
-        StartCoroutine(RoundTimer(45));
+        StartCoroutine(RoundTimer(160));
         SetNewTattoo();
 
         isGameInProgress = true;
@@ -121,7 +121,7 @@ public class GameController : MonoBehaviour
 
         PathDrawer.instance.SetNewTattoo(maxDist, templateRenderers);
 
-        Debug.Log("NEW TATTOO SET");
+        percent.text = "";
     }
 
     public void CheckPaths(List<PathCreator> playerPaths)
@@ -179,7 +179,12 @@ public class GameController : MonoBehaviour
         points += pointsToAdd;
         pointsText.text = points.ToString() + "$";
 
-        if (roundTime > 0)
+        if (points >= pointsLimit)
+        {
+            StopAllCoroutines();
+            EndRound();
+        }
+        else if (roundTime > 0)
         {
             StartCoroutine(WaitForCustomer());
         }
@@ -187,7 +192,7 @@ public class GameController : MonoBehaviour
 
     IEnumerator WaitForCustomer ()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
         PathDrawer.instance.HideTemplate();
         animator.SetTrigger("End");
         yield return new WaitForSeconds(0.5f);
@@ -211,7 +216,14 @@ public class GameController : MonoBehaviour
         PathDrawer.instance.OnRoundEnd();
         animator.SetTrigger("End");
 
-        //END ROUND
+        percent.text = "";
+        moneyText.text = "";
+
+        EndRound();
+    }
+
+    void EndRound()
+    {
         if (points >= pointsLimit)
         {
             if (round == 11)
@@ -222,9 +234,10 @@ public class GameController : MonoBehaviour
             else
             {
                 endRoundPanel.SetActive(true);
-                endRoundText.text = "Good job!\nThis round you have to earn " + pointsLimits[round] + "$";
+                endRoundText.text = "Good job!\nEarn " + pointsLimits[round] + "$ to complete the round ";
             }
-        } else
+        }
+        else
         {
             losePanel.SetActive(true);
             loseText.text = "You earned total of " + totalPoints + "$";
